@@ -2,7 +2,7 @@ package dtos
 
 type CreateEventDto struct {
 	Name       string `json:"name"`
-	FinishesAt string `json:"finishesAt"`
+	FinishesAt int64  `json:"finishesAt"`
 }
 
 func (c CreateEventDto) IsValid() bool {

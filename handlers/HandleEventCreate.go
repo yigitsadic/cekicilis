@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	uuid "github.com/satori/go.uuid"
 	"github.com/yigitsadic/cekicilis/dtos"
 	"github.com/yigitsadic/cekicilis/models"
 	"github.com/yigitsadic/cekicilis/services"
@@ -29,9 +30,6 @@ func HandleEventCreate(eventsService *services.EventsService) func(w http.Respon
 		var dto dtos.CreateEventDto
 		json.NewDecoder(r.Body).Decode(&dto)
 
-		log.Println(time.Now().UTC().Unix())
-		log.Println(dto)
-
 		// 2. Validate input
 		if !dto.IsValid() {
 			w.WriteHeader(http.StatusUnprocessableEntity)
@@ -45,6 +43,10 @@ func HandleEventCreate(eventsService *services.EventsService) func(w http.Respon
 		}
 
 		// 3. Insert to database
+		var insertedEvent models.Event
+		insertedEvent.Name = dto.Name
+		insertedEvent.Id = uuid.NewV4().String()
+		insertedEvent.FinishesAt = time.Unix(dto.FinishesAt, 0)
 
 		// 4. Enqueue background job.
 		go func(eventsService *services.EventsService) {
@@ -62,12 +64,7 @@ func HandleEventCreate(eventsService *services.EventsService) func(w http.Respon
 		w.WriteHeader(http.StatusCreated)
 		json.NewEncoder(w).Encode(&SuccessfulResponse{
 			Message: "Successfully created an event with given params",
-			Event: &models.Event{
-				Id:           "8cc67890-fe18-448d-af94-a583c3cfd951",
-				Participants: nil,
-				Name:         "eerere",
-				FinishesAt:   time.Now().Add(time.Minute * 15),
-			},
+			Event:   &insertedEvent,
 		})
 		return
 	}
