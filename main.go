@@ -2,9 +2,8 @@ package main
 
 import (
 	_ "github.com/lib/pq"
-	"github.com/yigitsadic/cekicilis/pgdb"
-
 	"github.com/yigitsadic/cekicilis/handlers"
+	"github.com/yigitsadic/cekicilis/pgdb"
 	"github.com/yigitsadic/cekicilis/services"
 	"log"
 	"net/http"
