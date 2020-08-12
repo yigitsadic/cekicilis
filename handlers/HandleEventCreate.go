@@ -52,9 +52,9 @@ func HandleEventCreate(eventsService *services.EventsService) func(w http.Respon
 
 		// 4. Enqueue background job.
 		go func(eventsService *services.EventsService, event *models.Event) {
-			time.AfterFunc(time.Second*10, func() {
+			time.AfterFunc(time.Second*30, func() {
 				// Calculate winner.
-				winners := eventsService.CalculateWinners()
+				winners := eventsService.CalculateWinners(evt.Id)
 				log.Printf("[%s] for %s event winners are\t%v\n", event.Id, event.Name, winners)
 			})
 		}(eventsService, evt)
