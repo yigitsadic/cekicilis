@@ -17,11 +17,6 @@ type SuccessfulResponse struct {
 	Event   *models.Event `json:"event"`
 }
 
-type FailureResponse struct {
-	Message   string `json:"message"`
-	ErrorCode int    `json:"errorCode"`
-}
-
 func HandleEventCreate(eventsService *services.EventsService) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -34,7 +29,7 @@ func HandleEventCreate(eventsService *services.EventsService) func(w http.Respon
 		if !dto.IsValid() {
 			w.WriteHeader(http.StatusUnprocessableEntity)
 
-			json.NewEncoder(w).Encode(&FailureResponse{
+			json.NewEncoder(w).Encode(&shared.ErrorResponse{
 				Message:   "Create event params are not valid",
 				ErrorCode: shared.ERR_EVENT_PARAMS_NOT_VALID,
 			})
