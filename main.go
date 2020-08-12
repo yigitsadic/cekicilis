@@ -2,20 +2,28 @@ package main
 
 import (
 	"github.com/yigitsadic/cekicilis/handlers"
+	"github.com/yigitsadic/cekicilis/services"
 	"log"
 	"net/http"
 	"os"
+	"sync"
 )
+
+var doOnce sync.Once
+var timeoutEvents chan string
 
 func main() {
 	// Fetch expires within 1 day records.
 	// Calculate if winners list is empty.
+	doOnce.Do(processInitialData)
+
+	eventsService := services.NewEventsService()
 
 	// Creates event and enqueues to background job.
-	http.HandleFunc("/createEvent", handlers.HandleEventCreate)
+	http.HandleFunc("/create-event", handlers.HandleEventCreate)
 
 	// List events
-	http.HandleFunc("/eventList", handlers.HandleEventList)
+	http.HandleFunc("/event-list", handlers.HandleEventList(eventsService))
 
 	// Joins user to an event.
 	http.HandleFunc("/join", handlers.HandleJoin)
@@ -33,4 +41,8 @@ func main() {
 	if err != nil {
 		log.Printf("Unable to continue cause of %s", err)
 	}
+}
+
+func processInitialData() {
+	log.Println("No rows to process.")
 }

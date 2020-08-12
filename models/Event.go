@@ -3,7 +3,8 @@ package models
 import "time"
 
 type Event struct {
-	Participants []Participant
-	Name         string
-	FinishesAt   time.Time
+	Id           string        `json:"id"`
+	Participants []Participant `json:"participants"`
+	Name         string        `json:"name"`
+	FinishesAt   time.Time     `json:"finishesAt"`
 }
