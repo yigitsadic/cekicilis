@@ -20,7 +20,7 @@ func main() {
 	eventsService := services.NewEventsService()
 
 	// Creates event and enqueues to background job.
-	http.HandleFunc("/create-event", handlers.HandleEventCreate)
+	http.HandleFunc("/create-event", handlers.HandleEventCreate(eventsService))
 
 	// List events
 	http.HandleFunc("/event-list", handlers.HandleEventList(eventsService))

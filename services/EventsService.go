@@ -20,3 +20,13 @@ func (service *EventsService) GetEvents() ([]models.Event, error) {
 func (service *EventsService) CreateEvent() (*models.Event, error) {
 	return nil, nil
 }
+
+func (service *EventsService) CalculateWinners() []string {
+	return []string{
+		"Yigit",
+		"Sertan",
+		"Yağmur",
+		"Fazilet",
+		"Gülşen",
+	}
+}
