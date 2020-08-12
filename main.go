@@ -10,7 +10,6 @@ import (
 )
 
 var doOnce sync.Once
-var timeoutEvents chan string
 
 func main() {
 	// Fetch expires within 1 day records.
