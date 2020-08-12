@@ -54,8 +54,7 @@ func HandleEventCreate(eventsService *services.EventsService) func(w http.Respon
 		go func(eventsService *services.EventsService, event *models.Event) {
 			time.AfterFunc(time.Second*30, func() {
 				// Calculate winner.
-				winners := eventsService.CalculateWinners(evt.Id)
-				log.Printf("[%s] for %s event winners are\t%v\n", event.Id, event.Name, winners)
+				eventsService.CalculateWinners(evt.Id)
 			})
 		}(eventsService, evt)
 

@@ -95,7 +95,7 @@ func (service *EventsService) CreateEvent(dto *dtos.CreateEventDto) (*models.Eve
 	return event, nil
 }
 
-func (service *EventsService) CalculateWinners(evtId string) []string {
+func (service *EventsService) CalculateWinners(evtId string) {
 	service.PgDb.Connect()
 	defer service.PgDb.DB.Close()
 
@@ -133,6 +133,4 @@ func (service *EventsService) CalculateWinners(evtId string) []string {
 	if err != nil {
 		log.Printf("Unable to update winners for %s, winners were %v, error was %s\n", evtId, winners, err)
 	}
-
-	return winners
 }
