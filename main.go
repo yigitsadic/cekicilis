@@ -34,7 +34,7 @@ func main() {
 	http.HandleFunc("/join", handlers.HandleJoin(participantsService))
 
 	// Displays status and winners if present.
-	http.HandleFunc("/status", handlers.HandleStatus)
+	http.HandleFunc("/status", handlers.HandleStatus(eventsService))
 
 	port := os.Getenv("PORT")
 	if port == "" {

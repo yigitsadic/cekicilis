@@ -13,4 +13,5 @@ type Event struct {
 	Status       int           `json:"status"`
 	FinishesAt   time.Time     `json:"finishesAt"`
 	Participants []Participant `json:"participants,omitempty"`
+	Winners      []string      `json:"winners,omitempty"`
 }

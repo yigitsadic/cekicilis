@@ -8,10 +8,6 @@ import (
 	"net/http"
 )
 
-type successResponse struct {
-	Message string `json:"message"`
-}
-
 func HandleJoin(service *services.ParticipantService) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")

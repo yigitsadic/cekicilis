@@ -1,9 +1,11 @@
 package services
 
 import (
+	"github.com/lib/pq"
 	"github.com/yigitsadic/cekicilis/dtos"
 	"github.com/yigitsadic/cekicilis/models"
 	"github.com/yigitsadic/cekicilis/pgdb"
+	"log"
 	"time"
 )
 
@@ -43,6 +45,32 @@ func (service *EventsService) GetEvents() ([]*models.Event, error) {
 	}
 
 	return events, nil
+}
+
+func (service *EventsService) GetEvent(evtId string) (*models.Event, error) {
+	service.PgDb.Connect()
+	defer service.PgDb.DB.Close()
+
+	var name string
+	var status int
+	var finishesAt time.Time
+	var winners pq.StringArray
+	err := service.PgDb.DB.QueryRow("SELECT name, status, finishesat, winners FROM events WHERE id = $1 LIMIT 1", evtId).Scan(&name, &status, &finishesAt, &winners)
+	if err != nil {
+		log.Println("Unable to fetch given event with ID", err)
+
+		return nil, err
+	}
+
+	evt := &models.Event{
+		Id:         evtId,
+		Name:       name,
+		Status:     status,
+		FinishesAt: finishesAt,
+		Winners:    winners,
+	}
+
+	return evt, nil
 }
 
 func (service *EventsService) CreateEvent(dto *dtos.CreateEventDto) (*models.Event, error) {
