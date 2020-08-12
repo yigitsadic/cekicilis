@@ -6,6 +6,7 @@ import (
 )
 
 type EventsService struct {
+	participantService *ParticipantService
 }
 
 func NewEventsService() *EventsService {
