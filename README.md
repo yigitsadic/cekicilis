@@ -1,37 +1,34 @@
 # Cekicilis
 
-ENV Variables
+Cekicilis is a sweepstake service which has not authentication. Authentication and authorization at your responsibility.
 
-```
-DB_CONNECTION_STRING
-PORT
-```
+With Cekicilis you can create sweepstake event and assign it an occurrence time. When given time has come,
+service will choose random **n** participants as winners.
 
-## Tables
+Cekicilis designed for use with Docker. Plug this application to your private network.
 
-Events:
+Cekicilis does not handle database migrations. You should create data base with schema below.
 
-```sql
-CREATE TABLE events
-(
-    id uuid DEFAULT uuid_generate_v4()  PRIMARY KEY NOT NULL,
-    name varchar(255) NOT NULL,
-    expiresAt bigint NOT NULL,
-    status int DEFAULT 0 NOT NULL
-);
-CREATE UNIQUE INDEX events_id_uindex ON events (id);
-```
+## API Docs
 
-Participants:
-```sql
-CREATE TABLE public.participants
-(
-    id uuid DEFAULT uuid_generate_v4() PRIMARY KEY NOT NULL,
-    reference varchar(255),
-    userReference varchar(255) NOT NULL,
-    eventId uuid NOT NULL,
-    CONSTRAINT fk_event
-    FOREIGN KEY(eventId) REFERENCES events(id)
-);
-CREATE UNIQUE INDEX participants_id_uindex ON public.participants (id);
-```
+TODO
+
+## Requirements
+
+Service needs a Postgres DB in order to run.
+
+## Docker
+
+TODO
+
+## Hooks
+
+TODO
+
+## ENV Variables
+
+TODO
+
+## Database
+
+TODO
