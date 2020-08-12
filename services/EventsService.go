@@ -125,6 +125,17 @@ func (service *EventsService) CalculateWinners(evtId string) {
 	s1 := rand.NewSource(time.Now().UnixNano())
 	r1 := rand.New(s1)
 
+	if len(participants) < 1 {
+		log.Printf("Not enough participants for event %s\n", evtId)
+
+		_, err = service.PgDb.DB.Query("UPDATE events SET status=$1 WHERE id=$2", models.EVENT_COMPLETED, evtId)
+		if err != nil {
+			log.Printf("Unable to update event with id %s cause of %s\n", evtId, err)
+		}
+
+		return
+	}
+
 	for x := 1; x <= 2; x++ {
 		winners = append(winners, participants[r1.Intn(len(participants)-1)].userreference)
 	}
