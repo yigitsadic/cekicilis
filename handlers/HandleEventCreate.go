@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	uuid "github.com/satori/go.uuid"
 	"github.com/yigitsadic/cekicilis/dtos"
 	"github.com/yigitsadic/cekicilis/models"
 	"github.com/yigitsadic/cekicilis/services"
@@ -38,28 +37,33 @@ func HandleEventCreate(eventsService *services.EventsService) func(w http.Respon
 		}
 
 		// 3. Insert to database
-		var insertedEvent models.Event
-		insertedEvent.Name = dto.Name
-		insertedEvent.Id = uuid.NewV4().String()
-		insertedEvent.FinishesAt = time.Unix(dto.FinishesAt, 0)
+		evt, err := eventsService.CreateEvent(&dto)
+		if err != nil {
+			log.Println("Error occurred during inserting new event to the db", err)
+
+			w.WriteHeader(http.StatusUnprocessableEntity)
+			json.NewEncoder(w).Encode(&shared.ErrorResponse{
+				Message:   "Unable to insert event",
+				ErrorCode: shared.ERR_UNABLE_TO_INSERT_EVENT,
+			})
+
+			return
+		}
 
 		// 4. Enqueue background job.
-		go func(eventsService *services.EventsService) {
+		go func(eventsService *services.EventsService, event *models.Event) {
 			time.AfterFunc(time.Second*10, func() {
 				// Calculate winner.
 				winners := eventsService.CalculateWinners()
-
-				for i, winner := range winners {
-					log.Printf("#%d %s\n", i, winner)
-				}
+				log.Printf("[%s] for %s event winners are\t%v\n", event.Id, event.Name, winners)
 			})
-		}(eventsService)
+		}(eventsService, evt)
 
 		// 5. Serialize response and respond.
 		w.WriteHeader(http.StatusCreated)
 		json.NewEncoder(w).Encode(&SuccessfulResponse{
 			Message: "Successfully created an event with given params",
-			Event:   &insertedEvent,
+			Event:   evt,
 		})
 		return
 	}

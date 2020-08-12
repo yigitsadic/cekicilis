@@ -1,6 +1,7 @@
 package services
 
 import (
+	"github.com/yigitsadic/cekicilis/dtos"
 	"github.com/yigitsadic/cekicilis/models"
 	"github.com/yigitsadic/cekicilis/pgdb"
 	"time"
@@ -19,7 +20,7 @@ func (service *EventsService) GetEvents() ([]*models.Event, error) {
 	service.PgDb.Connect()
 	defer service.PgDb.DB.Close()
 
-	rows, err := service.PgDb.DB.Query("SELECT id, name, status, expiresat FROM events")
+	rows, err := service.PgDb.DB.Query("SELECT id, name, status, finishesat FROM events")
 	defer rows.Close()
 	if err != nil {
 		return nil, err
@@ -44,8 +45,25 @@ func (service *EventsService) GetEvents() ([]*models.Event, error) {
 	return events, nil
 }
 
-func (service *EventsService) CreateEvent() (*models.Event, error) {
-	return nil, nil
+func (service *EventsService) CreateEvent(dto *dtos.CreateEventDto) (*models.Event, error) {
+	service.PgDb.Connect()
+	defer service.PgDb.DB.Close()
+
+	var id string
+	err := service.PgDb.DB.QueryRow("INSERT INTO events (name, finishesat) VALUES ($1, $2) RETURNING id", dto.Name, time.Unix(dto.FinishesAt, 0)).Scan(&id)
+	if err != nil {
+		return nil, err
+	}
+
+	event := &models.Event{
+		Id:           id,
+		Name:         dto.Name,
+		Status:       models.EVENT_ONGOING,
+		FinishesAt:   time.Unix(dto.FinishesAt, 0),
+		Participants: nil,
+	}
+
+	return event, nil
 }
 
 func (service *EventsService) CalculateWinners() []string {
