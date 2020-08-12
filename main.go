@@ -18,6 +18,7 @@ func main() {
 	pgDB := pgdb.NewPostgres()
 
 	eventsService := services.NewEventsService(pgDB)
+	participantsService := services.NewParticipantService(pgDB)
 
 	// Fetch expires within 1 day records.
 	// Calculate if winners list is empty.
@@ -30,7 +31,7 @@ func main() {
 	http.HandleFunc("/event-list", handlers.HandleEventList(eventsService))
 
 	// Joins user to an event.
-	http.HandleFunc("/join", handlers.HandleJoin)
+	http.HandleFunc("/join", handlers.HandleJoin(participantsService))
 
 	// Displays status and winners if present.
 	http.HandleFunc("/status", handlers.HandleStatus)
