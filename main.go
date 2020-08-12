@@ -1,6 +1,9 @@
 package main
 
 import (
+	_ "github.com/lib/pq"
+	"github.com/yigitsadic/cekicilis/pgdb"
+
 	"github.com/yigitsadic/cekicilis/handlers"
 	"github.com/yigitsadic/cekicilis/services"
 	"log"
@@ -12,11 +15,13 @@ import (
 var doOnce sync.Once
 
 func main() {
+	pgDB := pgdb.NewPostgres()
+
+	eventsService := services.NewEventsService(pgDB)
+
 	// Fetch expires within 1 day records.
 	// Calculate if winners list is empty.
 	doOnce.Do(processInitialData)
-
-	eventsService := services.NewEventsService()
 
 	// Creates event and enqueues to background job.
 	http.HandleFunc("/create-event", handlers.HandleEventCreate(eventsService))
